@@ -1,0 +1,350 @@
+QUESTION 1 – JAVA PROGRAMMING (30 MARKS)
+
+PART 1: QUESTIONS
+
+Q1.1.1 – Develop a Java application
+
+Develop a Java application to generate a sales report for a local
+company specialising in mattress sales. The report should summarise the
+total sales for the company’s three top-performing products over three
+months.
+
+The application must calculate and display: - The total number of
+products sold. - The average number of products sold per product. - The
+most popular product based on the highest total sales.
+
+Sample data: Product Month 1 Month 2 Month 3 Cozy Nights Monarch 25 18
+20 Restonic Barbados 15 10 12 Sealy Phukek 18 15 20
+
+In your implementation, use both single and two-dimensional arrays to
+develop the product sales report for the business.
+
+Create a class called Product that includes distinct methods for
+obtaining the total products sold, calculating the average products
+sold, and determining the most popular product. The Product class must
+implement an IProducts interface.
+
+Q1.1.2 – Create an interface
+
+Create a public interface called IProducts containing the following
+methods:
+
+public interface IProducts {
+
+    int GetTotalProductsSold();
+
+    double GetAverageProductSold();
+
+    String GetMostPopularProduct();
+
+}
+
+Q1.1.3 – Create a PrintProduct class
+
+Additionally, create a class named PrintProduct that is responsible for
+printing the necessary data for the report.
+
+This class should include methods to: 1. Print the total product sales.
+2. Print the average product sales. 3. Print the most popular product
+sale.
+
+Q1.1.4 – Write unit tests
+
+You are also required to write unit tests for the application. Create a
+test package within the application you created, which will contain the
+necessary unit tests.
+
+Unit Test 1 Test Name:
+GetTotalProductSales_WithValidData_ReturnsCorrectValue() Test Purpose:
+The test will verify that the GetTotalProductsSold method in the Product
+class correctly returns the total products sold.
+
+Unit Test 2 Test Name:
+GetAverageSales_WithValidData_ReturnsCorrectValue() Test Purpose: The
+test will verify that the GetAverageProductSold method in the Product
+class correctly returns the average number of products sold.
+
+PART 2: SOLUTIONS
+
+1.  CREATE THE IProducts INTERFACE
+
+Create a Java file called IProducts.java.
+
+public interface IProducts {
+
+    int GetTotalProductsSold();
+
+    double GetAverageProductSold();
+
+    String GetMostPopularProduct();
+
+}
+
+2.  CREATE THE Product CLASS
+
+Create a file called Product.java. This class stores the product names
+and sales figures. It calculates the total, average and most popular
+product.
+
+public class Product implements IProducts {
+
+    private String[] productNames;
+    private int[][] sales;
+
+    public Product(String[] productNames, int[][] sales) {
+        this.productNames = productNames;
+        this.sales = sales;
+    }
+
+    @Override
+    public int GetTotalProductsSold() {
+
+        int total = 0;
+
+        for (int i = 0; i < sales.length; i++) {
+            for (int j = 0; j < sales[i].length; j++) {
+                total += sales[i][j];
+            }
+        }
+
+        return total;
+    }
+
+    @Override
+    public double GetAverageProductSold() {
+
+        int total = GetTotalProductsSold();
+        int count = 0;
+
+        for (int i = 0; i < sales.length; i++) {
+            count += sales[i].length;
+        }
+
+        if (count == 0) {
+            return 0;
+        }
+
+        return (double) total / count;
+    }
+
+    @Override
+    public String GetMostPopularProduct() {
+
+        int highestSales = -1;
+        String popularProduct = "";
+
+        for (int i = 0; i < sales.length; i++) {
+
+            int productTotal = 0;
+
+            for (int j = 0; j < sales[i].length; j++) {
+                productTotal += sales[i][j];
+            }
+
+            if (productTotal > highestSales) {
+                highestSales = productTotal;
+                popularProduct = productNames[i];
+            }
+        }
+
+        return popularProduct;
+    }
+
+}
+
+3.  CREATE THE PrintProduct CLASS
+
+Create a file called PrintProduct.java.
+
+public class PrintProduct {
+
+    private Product product;
+
+    public PrintProduct(Product product) {
+        this.product = product;
+    }
+
+    public void PrintTotalProductSales() {
+
+        System.out.println("TOTAL PRODUCT SALES: "
+                + product.GetTotalProductsSold());
+    }
+
+    public void PrintAverageProductSales() {
+
+        System.out.println("AVERAGE PRODUCT SALES: "
+                + product.GetAverageProductSold());
+    }
+
+    public void PrintMostPopularProduct() {
+
+        System.out.println("MOST POPULAR PRODUCT: "
+                + product.GetMostPopularProduct());
+    }
+
+    public void PrintReport() {
+
+        System.out.println("\nPRODUCT SALES REPORT - 2026");
+        System.out.println("*****************************");
+
+        PrintTotalProductSales();
+        PrintAverageProductSales();
+        PrintMostPopularProduct();
+    }
+
+}
+
+4.  CREATE THE Main CLASS
+
+Create a file called Main.java.
+
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Scanner input = new Scanner(System.in);
+
+        // Single-dimensional array
+        String[] products = {
+            "Cozy Nights Monarch",
+            "Restonic Barbados",
+            "Sealy Phukek"
+        };
+
+        // Two-dimensional array
+        int[][] sales = new int[3][3];
+
+        // Enter sales figures
+        for (int i = 0; i < products.length; i++) {
+
+            for (int j = 0; j < 3; j++) {
+
+                System.out.print(
+                    "Enter number of sales for month "
+                    + (j + 1) + " for "
+                    + products[i] + ": ");
+
+                sales[i][j] = input.nextInt();
+            }
+
+            System.out.println();
+        }
+
+        // Create Product object
+        Product product = new Product(products, sales);
+
+        // Create PrintProduct object
+        PrintProduct report = new PrintProduct(product);
+
+        // Display report
+        report.PrintReport();
+
+        input.close();
+    }
+
+}
+
+5.  CREATE THE TEST PACKAGE
+
+Create a package called test. Inside this package, create a Java file
+called ProductTest.java. The following tests use JUnit 5.
+
+package test;
+
+import org.junit.jupiter.api.Test; import static
+org.junit.jupiter.api.Assertions.*;
+
+// Import Product if it is in another named package. // Example: import
+products.Product;
+
+public class ProductTest {
+
+    @Test
+    public void GetTotalProductSales_WithValidData_ReturnsCorrectValue() {
+
+        String[] products = {
+            "Cozy Nights Monarch",
+            "Restonic Barbados",
+            "Sealy Phukek"
+        };
+
+        int[][] sales = {
+            {25, 18, 20},
+            {15, 10, 12},
+            {18, 15, 20}
+        };
+
+        Product product = new Product(products, sales);
+
+        assertEquals(153, product.GetTotalProductsSold());
+    }
+
+    @Test
+    public void GetAverageSales_WithValidData_ReturnsCorrectValue() {
+
+        String[] products = {
+            "Cozy Nights Monarch",
+            "Restonic Barbados",
+            "Sealy Phukek"
+        };
+
+        int[][] sales = {
+            {25, 18, 20},
+            {15, 10, 12},
+            {18, 15, 20}
+        };
+
+        Product product = new Product(products, sales);
+
+        assertEquals(17.0,
+                product.GetAverageProductSold(), 0.01);
+    }
+
+}
+
+PART 3: EXPECTED OUTPUT
+
+When you enter the sample figures from the question, the total
+calculations are:
+
+Product Total sales Cozy Nights Monarch 63 Restonic Barbados 37 Sealy
+Phukek 53 GRAND TOTAL 153
+
+Average: 153 / 9 = 17
+
+Most popular product: Cozy Nights Monarch.
+
+Expected report output:
+
+PRODUCT SALES REPORT - 2026 *****************************
+
+TOTAL PRODUCT SALES: 153
+
+AVERAGE PRODUCT SALES: 17.0
+
+MOST POPULAR PRODUCT: Cozy Nights Monarch
+
+NOTE: The sample screenshot shows Cozy Nights Monarch (25). However, the
+question says to determine the most popular product using the highest
+total sales. Therefore, the correct total is 63, not 25.
+
+PART 4: PROJECT STRUCTURE
+
+Your NetBeans project should look like this:
+
+ProductSalesApplication | +– Source Packages | | | +– products | | +–
+IProducts.java | | +– Product.java | | +– PrintProduct.java | | +–
+Main.java | | | +– test | +– ProductTest.java | +– Test Packages
+
+SUMMARY OF COMPLETED SECTIONS
+
+1.  Q1.1.1 – Java application.
+2.  Q1.1.2 – IProducts interface.
+3.  Q1.1.3 – PrintProduct class.
+4.  Q1.1.4 – Two unit tests.
+
+These solutions are based on the two uploaded pages (pages 4 and 5). The
+remaining pages of the 14-page assignment were not included, so this
+document covers the visible Question 1 material.
